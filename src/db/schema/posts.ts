@@ -4,18 +4,21 @@ import {relations} from "drizzle-orm";
 import {users} from "@/db/schema/users";
 import {likes} from "@/db/schema/likes";
 import {saves} from "@/db/schema/saves";
+import {attachments} from "@/db/schema/attachments";
+import {v4 as uuid} from "uuid";
+import {tags} from "@/db/schema/tags";
 
 export const posts = sqliteTable('posts', {
-    id: integer().primaryKey(),
+    id: text().primaryKey().$defaultFn(uuid),
     text: text(),
 
-    owner_id: integer('owner_id')
+    owner_id: text('owner_id')
         .notNull()
         .references(
             () => users.id,
             {onDelete: 'cascade'}
         ),
-    reply_post_id: integer('reply_post_id'),
+    reply_post_id: text('reply_post_id'),
     // счетчики для оптимизации
     likes_count: integer()
         .notNull()
@@ -46,4 +49,6 @@ export const postsRelations = relations(posts, ({one, many}) => ({
     }),
     liked_by: many(likes),
     added_to_favourite: many(saves),
+    attachments: many(attachments),
+    tags: many(tags),
 }));

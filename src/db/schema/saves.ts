@@ -1,4 +1,4 @@
-import {sqliteTable, integer, primaryKey} from "drizzle-orm/sqlite-core"
+import {sqliteTable, primaryKey, text} from "drizzle-orm/sqlite-core"
 import {users} from "@/db/schema/users";
 import {relations} from "drizzle-orm";
 import {created_at} from "@/db/schema/helpers/timestamp.helpers";
@@ -7,13 +7,13 @@ import {posts} from "@/db/schema/posts";
 export const saves = sqliteTable(
     'saves',
     {
-        user_id: integer('user_id')
+        user_id: text('user_id')
             .notNull()
             .references(
                 () => users.id,
                 {onDelete: 'cascade'}
             ),
-        post_id: integer('post_id')
+        post_id: text('post_id')
             .notNull()
             .references(
                 () => posts.id,

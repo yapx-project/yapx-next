@@ -1,4 +1,4 @@
-import {sqliteTable, integer, primaryKey} from "drizzle-orm/sqlite-core"
+import {sqliteTable, primaryKey, text} from "drizzle-orm/sqlite-core"
 import {users} from "@/db/schema/users";
 import {relations} from "drizzle-orm";
 import {created_at} from "@/db/schema/helpers/timestamp.helpers";
@@ -6,13 +6,13 @@ import {created_at} from "@/db/schema/helpers/timestamp.helpers";
 export const follows = sqliteTable(
     'follows',
     {
-        followed_by_id: integer('followed_by_id')
+        followed_by_id: text('followed_by_id')
             .notNull()
             .references(
                 () => users.id,
                 {onDelete: 'cascade'}
             ),
-        following_id: integer('following_id')
+        following_id: text('following_id')
             .notNull()
             .references(
                 () => users.id,

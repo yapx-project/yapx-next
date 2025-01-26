@@ -1,13 +1,14 @@
-import {sqliteTable, integer, text} from "drizzle-orm/sqlite-core"
+import {sqliteTable, text} from "drizzle-orm/sqlite-core"
 import {created_at, updated_at} from "@/db/schema/helpers/timestamp.helpers";
 import {relations} from "drizzle-orm";
 import {follows} from "@/db/schema/follows";
 import {posts} from "@/db/schema/posts";
 import {likes} from "@/db/schema/likes";
 import {saves} from "@/db/schema/saves";
+import { v4 as uuid } from 'uuid';
 
 export const users = sqliteTable('users', {
-    id: integer().primaryKey(),
+    id: text().primaryKey().$defaultFn(uuid),
     email: text().unique().notNull(),
     nickname: text().unique().notNull(),
     password: text(), // null если зарегался через oauth
