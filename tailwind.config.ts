@@ -11,8 +11,16 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        primary: "#F3F4F6"
+        primary_gray: "#F3F4F6",
+        input_border: "#D1D5DB",
+        primary_blue: "#2563EB",
+        gray_title_dark: "#6B7280",
+        gray_title_light: "#9CA3AF"
       },
+      fontFamily: {
+        inter: ["var(--font-inter)"],
+        roboto: ["var(--font-roboto)"]
+      }
     },
   },
   plugins: [],
