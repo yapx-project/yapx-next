@@ -14,7 +14,7 @@ const registerSchema = z.object({
     .string()
     .min(3, "Минимальная длинна имени пользователя 3 символа"),
   password: z.string().min(6, "Минимальная длина пароля 6 символов"),
-  full_name: z.string().min(1, "Имя не может быть пустым"),
+  name: z.string().min(1, "Имя не может быть пустым"),
 });
 
 export default async function handler(
@@ -48,7 +48,7 @@ export default async function handler(
       .values({
         email: data.email,
         nickname: data.nickname,
-        full_name: data.full_name,
+        name: data.name,
         password: hashedPassword,
       })
       .run();

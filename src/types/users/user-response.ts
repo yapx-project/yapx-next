@@ -2,5 +2,6 @@ export interface UserResponse {
   id: string;
   email: string;
   nickname: string;
-  full_name: string;
+  name: string;
+  image: string | null;
 }
