@@ -1,4 +1,4 @@
-import NextAuth, { SessionStrategy } from "next-auth";
+import NextAuth, { SessionStrategy, User } from "next-auth";
 import YandexProvider from "next-auth/providers/yandex";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/db/drizzle";
@@ -7,6 +7,8 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts } from "@/db/schema/accounts";
+import { JWT } from "next-auth/jwt";
+import { Session } from "@/types/auth/Session";
 
 export const authOptions = {
   adapter: DrizzleAdapter(db, {
@@ -18,6 +20,27 @@ export const authOptions = {
   },
   session: { strategy: "jwt" as SessionStrategy },
   skipCSRFCheck: true,
+  callbacks: {
+    session: async ({
+      session,
+      token,
+    }: {
+      session: Session;
+      token: JWT;
+      user: User;
+    }) => {
+      if (session?.user) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+    // jwt: async ({ user, token }: { user: User; token: JWT }) => {
+    //   if (user) {
+    //     token.id = user.id;
+    //   }
+    //   return token;
+    // },
+  },
   providers: [
     CredentialsProvider({
       name: "credentials",
