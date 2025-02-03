@@ -1,4 +1,5 @@
-import AuthView from "./auth_view";
+import SignInView from "./sign_in_view";
+import SignUpView from "./sign_up_view";
 import { Inter, Roboto } from "next/font/google";
 
 const interFont = Inter({
@@ -16,7 +17,7 @@ const robotoFont = Roboto({
 export default function Home() {
   return (
     <div className={`${interFont.variable} ${robotoFont.variable}`}>
-      <AuthView />
+      <SignInView />
     </div>
   )
 };

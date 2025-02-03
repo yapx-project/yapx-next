@@ -1,17 +1,19 @@
-import { useState } from "react"
+import { SyntheticEvent, useState } from "react"
 import Image from "next/image"
 import logo from "../styles/yapx_logo.png"
+import Input from "@/components/input"
+import ButtonBlue from "@/components/button_blue"
+import ButtonTransparent from "@/components/button_transparent"
+import { InputEvent } from "@/types/events"
 
-export default function AuthView() {
+export default function SignInView() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const getEmail = (t: string) => {
-    console.log(t)
-    setEmail(t)
+  const getEmail = (e: InputEvent) => {
+    setEmail(e.target.value)
   }
-  const getPassword = (t: string) => {
-    console.log(t)
-    setPassword(t)
+  const getPassword = (e: InputEvent) => {
+    setPassword(e.target.value)
   }
 
   return (
@@ -44,29 +46,3 @@ export default function AuthView() {
   )
 }
 
-function ButtonBlue({ className, title }: any) {
-  return (
-    <button className={`h-10 bg-primary_blue rounded-md font-inter font-semibold text-sm text-white ${className}`}>{title}</button>
-  )
-}
-
-function ButtonTransparent({ className, title }: any) {
-  return (
-    <button className={`h-10 bg-transparent border border-gray-500 rounded-md font-inter font-semibold text-sm text-black ${className}`}>{title}</button>
-  )
-}
-
-function Input({ title, placeholder, type, getValue, value }: any) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="text-xs font-inter text-gray-600">{title}</label>
-      <input
-        className="h-9 bg-primary_gray border border-input_border rounded p-3 placeholder-gray_title_light text-sm font-inter"
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => getValue(e.target.value)}
-      />
-    </div>
-  )
-}
