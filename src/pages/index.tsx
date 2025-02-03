@@ -3,7 +3,7 @@ import { Inter, Roboto } from "next/font/google";
 
 const interFont = Inter({
   subsets: ['latin'],
-  weight: ["400"],
+  weight: ["400", "600"],
   variable: "--font-inter"
 });
 
