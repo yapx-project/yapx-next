@@ -1,10 +1,10 @@
-import { SyntheticEvent, useState } from "react";
 import Image from "next/image";
 import logo from "../../styles/yapx_logo.png";
 import Input from "@/components/input";
 import ButtonBlue from "@/components/button_blue";
 import ButtonTransparent from "@/components/button_transparent";
 import { InputEvent } from "@/types/events";
+import { useState } from "react";
 
 export default function SignInView() {
   const [email, setEmail] = useState("");
