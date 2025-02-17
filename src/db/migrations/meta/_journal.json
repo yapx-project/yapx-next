@@ -22,6 +22,13 @@
       "when": 1739812960463,
       "tag": "0002_previous_northstar",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1739827500198,
+      "tag": "0003_naive_cassandra_nova",
+      "breakpoints": true
     }
   ]
 }

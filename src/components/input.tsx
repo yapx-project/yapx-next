@@ -1,4 +1,4 @@
-import { InputEvent } from "@/types/events";
+import { InputEvent } from "@/shared/types/events";
 interface InputProps {
   title: string;
   placeholder: string;

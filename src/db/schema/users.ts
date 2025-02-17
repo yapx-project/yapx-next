@@ -5,6 +5,7 @@ import { relations } from "drizzle-orm";
 import { posts } from "@/db/schema/posts";
 import { postsSaves } from "@/db/schema/posts_saves";
 import { postsLikes } from "@/db/schema/posts_likes";
+import { usersFollows } from "@/db/schema/users_follows";
 
 export const users = sqliteTable("users", {
   id: text().primaryKey().$defaultFn(uuid),
@@ -23,4 +24,6 @@ export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts, { relationName: "owner" }),
   liked_posts: many(postsLikes),
   saved_posts: many(postsSaves),
+  followedBy: many(usersFollows, { relationName: "followedBy" }),
+  following: many(usersFollows, { relationName: "following" }),
 }));
