@@ -5,6 +5,8 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { Session } from "@/types/auth/Session";
+import { users } from "@/db/schema/users";
+import { eq } from "drizzle-orm";
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,7 +26,24 @@ export default async function handler(
 }
 
 export async function get(req: NextApiRequest, res: NextApiResponse) {
-  const postsData = await db.select().from(posts).limit(25);
+  const postsData = await db
+    .select({
+      id: posts.id,
+      text: posts.text,
+      owner_id: posts.owner_id,
+      reply_to_post_id: posts.reply_to_post_id,
+      created_at: posts.created_at,
+      updated_at: posts.updated_at,
+      owner: {
+        id: users.id,
+        nickname: users.nickname,
+        name: users.name,
+        image: users.image,
+      },
+    })
+    .from(posts)
+    .leftJoin(users, eq(posts.owner_id, users.id))
+    .limit(25);
   return res.status(200).json({ items: postsData });
 }
 

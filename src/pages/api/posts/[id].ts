@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { Session } from "@/types/auth/Session";
 import { eq } from "drizzle-orm";
+import { users } from "@/db/schema/users";
 
 export default async function handler(
   req: NextApiRequest,
@@ -33,10 +34,23 @@ export async function get(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const postData = await db
-    .select()
+    .select({
+      id: posts.id,
+      text: posts.text,
+      owner_id: posts.owner_id,
+      reply_to_post_id: posts.reply_to_post_id,
+      created_at: posts.created_at,
+      updated_at: posts.updated_at,
+      owner: {
+        id: users.id,
+        nickname: users.nickname,
+        name: users.name,
+        image: users.image,
+      },
+    })
     .from(posts)
     .where(eq(posts.id, id))
-    //.leftJoin(users, eq(posts.owner_id, users.id))
+    .leftJoin(users, eq(posts.owner_id, users.id))
     .get();
   if (!postData) {
     return res.status(404).json({ message: "Post not found" });
