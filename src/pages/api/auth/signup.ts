@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ApiExceptionDto } from "@/types/exceptions/api-exception";
+import { ApiExceptionDto } from "@/entities/exceptions/api-exception";
 import { db } from "@/db/drizzle";
 import { users } from "@/db/schema/users";
 import bcrypt from "bcryptjs";
-import { ValidationExceptionDto } from "@/types/exceptions/validation-exception";
-import { SignupResponse } from "@/types/auth/SignupResponse";
+import { ValidationExceptionDto } from "@/entities/exceptions/validation-exception";
+import { SignupResponse } from "@/entities/posts/types/SignupResponse";
 import { findUserByEmailOrNickname } from "@/entities/users/service";
 import { registerUserSchema } from "@/entities/users/schema";
 

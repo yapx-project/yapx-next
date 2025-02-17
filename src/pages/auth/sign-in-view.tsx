@@ -2,7 +2,7 @@ import Image from "next/image";
 import Input from "@/components/input";
 import ButtonBlue from "@/components/button_blue";
 import ButtonTransparent from "@/components/button_transparent";
-import { InputEvent } from "@/types/events";
+import { InputEvent } from "@/shared/types/events";
 import { useState } from "react";
 
 export default function SignInView() {

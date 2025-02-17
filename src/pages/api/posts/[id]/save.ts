@@ -4,7 +4,7 @@ import { savePostById, unsavePostById } from "@/entities/posts/service";
 import { ensureUserIsLoggedIn } from "@/entities/users/utils";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { Session } from "@/types/auth/Session";
+import { Session } from "@/entities/posts/types/Session";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method, query } = req;

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { Session } from "@/types/auth/Session";
+import { Session } from "@/entities/posts/types/Session";
 import { createPostSchema } from "@/entities/posts/schema";
 import { createPost, findPosts } from "@/entities/posts/service";
 import { parseQueryParamAsNumber } from "@/shared/utils/params";

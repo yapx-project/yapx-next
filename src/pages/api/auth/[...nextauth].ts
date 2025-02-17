@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts } from "@/db/schema/accounts";
 import { JWT } from "next-auth/jwt";
-import { Session } from "@/types/auth/Session";
+import { Session } from "@/entities/posts/types/Session";
 import { findUserByEmail } from "@/entities/users/service";
 
 export const authOptions = {

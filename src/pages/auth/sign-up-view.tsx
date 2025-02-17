@@ -2,7 +2,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Input from "@/components/input";
 import ButtonBlue from "@/components/button_blue";
-import { InputEvent } from "@/types/events";
+import { InputEvent } from "@/shared/types/events";
 
 export default function SignUpView() {
   const [name, setName] = useState("");

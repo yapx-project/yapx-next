@@ -3,7 +3,7 @@ import { withGlobalErrorHandler } from "@/shared/utils/globalErrorHandler";
 import { ensureUserIsLoggedIn } from "@/entities/users/utils";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { Session } from "@/types/auth/Session";
+import { Session } from "@/entities/posts/types/Session";
 import { followUserById, unfollowUserById } from "@/entities/users/service";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {

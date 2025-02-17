@@ -1,4 +1,4 @@
-import { Session } from "@/types/auth/Session";
+import { Session } from "@/entities/posts/types/Session";
 
 function ensureUserIsLoggedIn(session: Session | null | undefined) {
   if (!session) {
