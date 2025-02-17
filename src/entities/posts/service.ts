@@ -6,22 +6,24 @@ import { CreatePost, UpdatePost } from "@/entities/posts/schema";
 import { postsLikes } from "@/db/schema/posts_likes";
 import { postsSaves } from "@/db/schema/posts_saves";
 
+const selectPost = {
+  id: posts.id,
+  text: posts.text,
+  owner_id: posts.owner_id,
+  reply_to_post_id: posts.reply_to_post_id,
+  created_at: posts.created_at,
+  updated_at: posts.updated_at,
+  owner: {
+    id: users.id,
+    nickname: users.nickname,
+    name: users.name,
+    image: users.image,
+  },
+};
+
 async function findPosts(limit: number = 25, offset: number = 0) {
   return db
-    .select({
-      id: posts.id,
-      text: posts.text,
-      owner_id: posts.owner_id,
-      reply_to_post_id: posts.reply_to_post_id,
-      created_at: posts.created_at,
-      updated_at: posts.updated_at,
-      owner: {
-        id: users.id,
-        nickname: users.nickname,
-        name: users.name,
-        image: users.image,
-      },
-    })
+    .select(selectPost)
     .from(posts)
     .leftJoin(users, eq(posts.owner_id, users.id))
     .limit(limit)
@@ -34,20 +36,7 @@ async function findPostById(id: string) {
 
 async function getPostById(id: string) {
   return db
-    .select({
-      id: posts.id,
-      text: posts.text,
-      owner_id: posts.owner_id,
-      reply_to_post_id: posts.reply_to_post_id,
-      created_at: posts.created_at,
-      updated_at: posts.updated_at,
-      owner: {
-        id: users.id,
-        nickname: users.nickname,
-        name: users.name,
-        image: users.image,
-      },
-    })
+    .select(selectPost)
     .from(posts)
     .where(eq(posts.id, id))
     .leftJoin(users, eq(posts.owner_id, users.id))
@@ -119,6 +108,7 @@ async function unsavePostById(post_id: string, user_id: string) {
 }
 
 export {
+  selectPost,
   findPosts,
   findPostById,
   getPostById,

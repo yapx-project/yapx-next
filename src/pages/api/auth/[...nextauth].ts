@@ -3,12 +3,12 @@ import YandexProvider from "next-auth/providers/yandex";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/db/drizzle";
 import { users } from "@/db/schema/users";
-import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { accounts } from "@/db/schema/accounts";
 import { JWT } from "next-auth/jwt";
 import { Session } from "@/types/auth/Session";
+import { findUserByEmail } from "@/entities/users/service";
 
 export const authOptions = {
   adapter: DrizzleAdapter(db, {
@@ -57,11 +57,7 @@ export const authOptions = {
           return null;
         }
 
-        const existingUser = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, credentials!.email))
-          .get();
+        const existingUser = await findUserByEmail(credentials!.email);
 
         if (!(existingUser && existingUser!.password)) {
           return null;
