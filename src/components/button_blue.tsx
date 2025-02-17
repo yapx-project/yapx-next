@@ -1,5 +1,5 @@
 export interface ButtonProps {
-  classname: string;
+  className: string;
   title: string;
 }
 export default function ButtonBlue(props: ButtonProps) {

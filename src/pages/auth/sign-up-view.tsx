@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Image from "next/image";
-import logo from "../styles/yapx_logo.png";
 import Input from "@/components/input";
 import ButtonBlue from "@/components/button_blue";
 import { InputEvent } from "@/types/events";
@@ -31,7 +30,13 @@ export default function SignUpView() {
   return (
     <div className="flex h-dvh flex-col justify-between bg-primary_gray">
       <header className="flex h-14 items-center bg-white">
-        <Image className="ml-5" src={logo} alt="logo" />
+        <Image
+          className="ml-5"
+          src={"/yapx_logo.png"}
+          width={74}
+          height={24}
+          alt="logo"
+        />
       </header>
       <main className="m-5">
         <h1 className="mb-4 font-roboto text-2xl">Регистрация</h1>
