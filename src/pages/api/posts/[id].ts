@@ -1,24 +1,32 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "@/db/drizzle";
-import { posts } from "@/db/schema/posts";
-import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { Session } from "@/types/auth/Session";
-import { eq } from "drizzle-orm";
-import { users } from "@/db/schema/users";
+import { updatePostSchema } from "@/entities/posts/schema";
+import {
+  deletePostById,
+  findPostById,
+  getPostById,
+  updatePostById,
+} from "@/entities/posts/service";
+import { ensureUserIsLoggedIn } from "@/entities/users/utils";
+import { withGlobalErrorHandler } from "@/shared/utils/globalErrorHandler";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  switch (req.method) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { method, query } = req;
+  const { id } = query;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({ message: "Invalid or missing post ID." });
+  }
+
+  switch (method) {
     case "GET":
-      return get(req, res);
+      return getPostHandler(id, res);
     case "PATCH":
-      return patch(req, res);
+      return updatePostHandler(req, res, id);
     case "DELETE":
-      return del(req, res);
+      return deletePostHandler(req, res, id);
     default:
       res.setHeader("Allow", ["GET", "PATCH", "DELETE"]);
       return res
@@ -27,114 +35,68 @@ export default async function handler(
   }
 }
 
-export async function get(req: NextApiRequest, res: NextApiResponse) {
-  const id = req.query.id;
-  if (typeof id !== "string") {
-    return res.status(404).json({ message: "Wrong post id" });
-  }
-
-  const postData = await db
-    .select({
-      id: posts.id,
-      text: posts.text,
-      owner_id: posts.owner_id,
-      reply_to_post_id: posts.reply_to_post_id,
-      created_at: posts.created_at,
-      updated_at: posts.updated_at,
-      owner: {
-        id: users.id,
-        nickname: users.nickname,
-        name: users.name,
-        image: users.image,
-      },
-    })
-    .from(posts)
-    .where(eq(posts.id, id))
-    .leftJoin(users, eq(posts.owner_id, users.id))
-    .get();
+export async function getPostHandler(id: string, res: NextApiResponse) {
+  const postData = await getPostById(id);
   if (!postData) {
     return res.status(404).json({ message: "Post not found" });
   }
   return res.status(200).json({ item: postData });
 }
 
-const postSchema = z.object({
-  text: z.string().min(1, "Минимальная длина поста 1 символ"),
-});
+export async function updatePostHandler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  id: string,
+) {
+  const user = ensureUserIsLoggedIn(
+    (await getServerSession(req, res, authOptions)) as Session,
+  );
 
-export async function patch(req: NextApiRequest, res: NextApiResponse) {
-  const session = (await getServerSession(req, res, authOptions)) as Session;
-  if (!(session && session.user)) {
-    res.status(401).json({ message: "You must be logged in." });
-    return;
-  }
-
-  const id = req.query.id;
-  if (typeof id !== "string") {
-    return res.status(404).json({ message: "Wrong post id" });
-  }
-
-  const postData = await db.select().from(posts).where(eq(posts.id, id)).get();
+  const postData = await findPostById(id);
   if (!postData) {
     return res.status(404).json({ message: "Post not found" });
   }
 
-  if (postData.owner_id !== session.user.id) {
-    return res.status(401).json({ message: "Permission error" });
+  if (postData.owner_id !== user.id) {
+    throw new Error("FORBIDDEN");
   }
 
   try {
-    const data = postSchema.parse(req.body);
+    const data = updatePostSchema.parse(req.body);
 
-    const result = await db
-      .update(posts)
-      .set({
-        text: data.text,
-      })
-      .where(eq(posts.id, id))
-      .returning();
+    const updatedPost = await updatePostById(id, data);
 
-    return res.status(200).json({ item: result });
+    return res.status(200).json({ item: updatedPost });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res
-        .status(400)
-        .json({ error: "Ошибка валидации", validation: error.errors });
-    }
+    throw error;
   }
 }
 
-export async function del(req: NextApiRequest, res: NextApiResponse) {
-  const session = (await getServerSession(req, res, authOptions)) as Session;
-  if (!(session && session.user)) {
-    res.status(401).json({ message: "You must be logged in." });
-    return;
-  }
+export async function deletePostHandler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  id: string,
+) {
+  const user = ensureUserIsLoggedIn(
+    (await getServerSession(req, res, authOptions)) as Session,
+  );
 
-  const id = req.query.id;
-  if (typeof id !== "string") {
-    return res.status(404).json({ message: "Wrong post id" });
-  }
-
-  const postData = await db.select().from(posts).where(eq(posts.id, id)).get();
+  const postData = await findPostById(id);
   if (!postData) {
     return res.status(404).json({ message: "Post not found" });
   }
 
-  if (postData.owner_id !== session.user.id) {
-    return res.status(401).json({ message: "Permission error" });
+  if (postData.owner_id !== user.id) {
+    throw new Error("FORBIDDEN");
   }
 
   try {
-    const result = await db.delete(posts).where(eq(posts.id, id)).returning();
+    const deletedPost = await deletePostById(id);
 
-    return res.status(200).json({ item: result });
+    return res.status(200).json({ item: deletedPost });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res
-        .status(400)
-        .json({ error: "Ошибка валидации", validation: error.errors });
-    }
-    return res.status(500).json({ error: "Server error" });
+    throw error;
   }
 }
+
+export default withGlobalErrorHandler(handler);
