@@ -3,6 +3,8 @@ import { created_at, updated_at } from "@/db/schema/helpers/timestamp.helpers";
 import { v4 as uuid } from "uuid";
 import { relations } from "drizzle-orm";
 import { posts } from "@/db/schema/posts";
+import { postsSaves } from "@/db/schema/posts_saves";
+import { postsLikes } from "@/db/schema/posts_likes";
 
 export const users = sqliteTable("users", {
   id: text().primaryKey().$defaultFn(uuid),
@@ -19,4 +21,6 @@ export const users = sqliteTable("users", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts, { relationName: "owner" }),
+  liked_posts: many(postsLikes),
+  saved_posts: many(postsSaves),
 }));

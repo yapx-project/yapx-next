@@ -1,8 +1,10 @@
 import { db } from "@/db/drizzle";
 import { posts } from "@/db/schema/posts";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { users } from "@/db/schema/users";
 import { CreatePost, UpdatePost } from "@/entities/posts/schema";
+import { postsLikes } from "@/db/schema/posts_likes";
+import { postsSaves } from "@/db/schema/posts_saves";
 
 async function findPosts(limit: number = 25, offset: number = 0) {
   return db
@@ -78,6 +80,44 @@ async function deletePostById(id: string) {
   return db.delete(posts).where(eq(posts.id, id)).returning();
 }
 
+async function likePostById(post_id: string, user_id: string) {
+  return db
+    .insert(postsLikes)
+    .values({
+      post_id: post_id,
+      user_id: user_id,
+    })
+    .returning();
+}
+
+async function unlikePostById(post_id: string, user_id: string) {
+  return db
+    .delete(postsLikes)
+    .where(
+      and(eq(postsLikes.post_id, post_id), eq(postsLikes.user_id, user_id)),
+    )
+    .returning();
+}
+
+async function savePostById(post_id: string, user_id: string) {
+  return db
+    .insert(postsSaves)
+    .values({
+      post_id: post_id,
+      user_id: user_id,
+    })
+    .returning();
+}
+
+async function unsavePostById(post_id: string, user_id: string) {
+  return db
+    .delete(postsSaves)
+    .where(
+      and(eq(postsSaves.post_id, post_id), eq(postsSaves.user_id, user_id)),
+    )
+    .returning();
+}
+
 export {
   findPosts,
   findPostById,
@@ -85,4 +125,8 @@ export {
   createPost,
   updatePostById,
   deletePostById,
+  likePostById,
+  unlikePostById,
+  savePostById,
+  unsavePostById,
 };

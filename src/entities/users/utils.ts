@@ -7,6 +7,9 @@ function ensureUserIsLoggedIn(session: Session | null | undefined) {
   if (!session.user) {
     throw new Error("UNAUTHORIZED");
   }
+  if (!session.user.id) {
+    throw new Error("UNAUTHORIZED");
+  }
   return session.user;
 }
 

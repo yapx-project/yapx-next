@@ -12,9 +12,9 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const session = ensureUserIsLoggedIn(
+  const user = ensureUserIsLoggedIn(
     (await getServerSession(req, res, authOptions)) as Session,
   );
 
-  return res.status(201).json({ user: session.user });
+  return res.status(201).json({ user: user });
 }
